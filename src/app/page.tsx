@@ -1,6 +1,5 @@
 import { Card, Col, Row, Tag, Tabs, Pagination } from "antd";
 import { format } from "date-fns";
-// Убедись, что путь правильный (после переноса папки lib в src)
 import { truncateText } from "@/lib/utils";
 
 interface Movie {
@@ -9,7 +8,7 @@ interface Movie {
   release_date: string;
   overview: string;
   poster_path: string | null;
-  vote_average: number; // Добавили рейтинг в интерфейс
+  vote_average: number;
 }
 
 async function getMovies() {
@@ -38,7 +37,6 @@ export default async function MoviePage() {
         alignItems: "center",
       }}
     >
-      {/* 1. Вкладки (Tabs) */}
       <Tabs
         defaultActiveKey="1"
         centered
@@ -49,7 +47,6 @@ export default async function MoviePage() {
         style={{ marginBottom: "20px" }}
       />
 
-      {/* 2. Сетка с карточками */}
       <Row gutter={[32, 32]} style={{ width: "100%", maxWidth: "1000px" }}>
         {movies.map((movie) => (
           <Col key={movie.id} xs={24} lg={12}>
@@ -60,7 +57,6 @@ export default async function MoviePage() {
               }}
               style={{ overflow: "hidden" }}
             >
-              {/* Левая часть: Постер */}
               <img
                 src={
                   movie.poster_path
@@ -71,7 +67,6 @@ export default async function MoviePage() {
                 style={{ width: "180px", height: "100%", objectFit: "cover" }}
               />
 
-              {/* Правая часть: Описание */}
               <div
                 style={{
                   padding: "20px",
@@ -90,13 +85,11 @@ export default async function MoviePage() {
                   <h3 style={{ fontSize: "18px", margin: 0, maxWidth: "80%" }}>
                     {movie.title}
                   </h3>
-                  {/* Кружочек рейтинга */}
                   <div className="rating-circle">
                     {movie.vote_average.toFixed(1)}
                   </div>
                 </div>
 
-                {/* Динамическая дата */}
                 <p style={{ color: "#999", fontSize: "12px", margin: "5px 0" }}>
                   {movie.release_date
                     ? format(new Date(movie.release_date), "MMMM d, yyyy")
@@ -122,7 +115,6 @@ export default async function MoviePage() {
           </Col>
         ))}
       </Row>
-
       {/* 3. Пагинация */}
       <Pagination
         defaultCurrent={1}
