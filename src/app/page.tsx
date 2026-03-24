@@ -1,65 +1,135 @@
-import Image from "next/image";
+import { Card, Col, Row, Tag, Tabs, Pagination } from "antd";
+import { format } from "date-fns";
+// Убедись, что путь правильный (после переноса папки lib в src)
+import { truncateText } from "@/lib/utils";
 
-export default function Home() {
+interface Movie {
+  id: number;
+  title: string;
+  release_date: string;
+  overview: string;
+  poster_path: string | null;
+  vote_average: number; // Добавили рейтинг в интерфейс
+}
+
+async function getMovies() {
+  const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
+  const baseUrl = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
+
+  const res = await fetch(
+    `${baseUrl}/search/movie?api_key=${apiKey}&query=return`,
+    { next: { revalidate: 3600 } },
+  );
+
+  if (!res.ok) throw new Error("Failed to fetch data");
+  const data = await res.json();
+  return data.results as Movie[];
+}
+
+export default async function MoviePage() {
+  const movies = await getMovies();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div
+      style={{
+        padding: "20px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      {/* 1. Вкладки (Tabs) */}
+      <Tabs
+        defaultActiveKey="1"
+        centered
+        items={[
+          { label: "Search", key: "1" },
+          { label: "Rated", key: "2" },
+        ]}
+        style={{ marginBottom: "20px" }}
+      />
+
+      {/* 2. Сетка с карточками */}
+      <Row gutter={[32, 32]} style={{ width: "100%", maxWidth: "1000px" }}>
+        {movies.map((movie) => (
+          <Col key={movie.id} xs={24} lg={12}>
+            <Card
+              hoverable
+              styles={{
+                body: { padding: 0, display: "flex", height: "280px" },
+              }}
+              style={{ overflow: "hidden" }}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+              {/* Левая часть: Постер */}
+              <img
+                src={
+                  movie.poster_path
+                    ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
+                    : "https://via.placeholder.com/200x300?text=No+Poster"
+                }
+                alt={movie.title}
+                style={{ width: "180px", height: "100%", objectFit: "cover" }}
+              />
+
+              {/* Правая часть: Описание */}
+              <div
+                style={{
+                  padding: "20px",
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <h3 style={{ fontSize: "18px", margin: 0, maxWidth: "80%" }}>
+                    {movie.title}
+                  </h3>
+                  {/* Кружочек рейтинга */}
+                  <div className="rating-circle">
+                    {movie.vote_average.toFixed(1)}
+                  </div>
+                </div>
+
+                {/* Динамическая дата */}
+                <p style={{ color: "#999", fontSize: "12px", margin: "5px 0" }}>
+                  {movie.release_date
+                    ? format(new Date(movie.release_date), "MMMM d, yyyy")
+                    : "Release date unknown"}
+                </p>
+
+                <div style={{ margin: "10px 0" }}>
+                  <Tag>Action</Tag>
+                  <Tag>Drama</Tag>
+                </div>
+
+                <p
+                  style={{
+                    fontSize: "13px",
+                    lineHeight: "1.4",
+                    overflow: "hidden",
+                  }}
+                >
+                  {truncateText(movie.overview, 150)}
+                </p>
+              </div>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+
+      {/* 3. Пагинация */}
+      <Pagination
+        defaultCurrent={1}
+        total={50}
+        style={{ marginTop: "40px", marginBottom: "20px" }}
+        showSizeChanger={false}
+      />
     </div>
   );
 }
