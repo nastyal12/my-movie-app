@@ -18,7 +18,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AntdRegistry>
-          {/* Контент страницы (page.tsx) вставится сюда */}
           <main style={{ maxWidth: "1200px", margin: "0 auto" }}>
             {children}
           </main>
