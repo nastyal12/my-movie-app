@@ -18,7 +18,7 @@ export const MovieCard = ({ movie }: MovieCardProps) => {
         src={
           movie.poster_path
             ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
-            : "https://via.placeholder.com/200x300?text=No+Poster"
+            : "https://placehold.jp/24/cccccc/ffffff/200x300.png?text=No%20Poster"
         }
         alt={movie.title}
         style={{ width: "180px", height: "100%", objectFit: "cover" }}

@@ -10,7 +10,7 @@ export default function Loading() {
         height: "100vh",
       }}
     >
-      <Spin size="large" tip="Loading movies..." />
+      <Spin size="large" description="Loading movies..." />
     </div>
   );
 }

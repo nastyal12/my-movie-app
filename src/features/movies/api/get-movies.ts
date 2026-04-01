@@ -1,6 +1,14 @@
 import { Movie } from "../types/movie";
 
-export async function getMovies(): Promise<Movie[]> {
+interface MovieResponse {
+  results: Movie[];
+  total_results: number;
+}
+
+export async function getMovies(
+  query: string = "return",
+  page: number = 1,
+): Promise<MovieResponse> {
   const apiKey = process.env.TMDB_API_KEY;
   const baseUrl = process.env.TMDB_BASE_URL;
 
@@ -11,7 +19,7 @@ export async function getMovies(): Promise<Movie[]> {
   }
 
   const res = await fetch(
-    `${baseUrl}/search/movie?api_key=${apiKey}&query=return`,
+    `${baseUrl}/search/movie?api_key=${apiKey}&query=${encodeURIComponent(query)}&page=${page}`,
     {
       next: { revalidate: 3600 },
     },
@@ -22,5 +30,9 @@ export async function getMovies(): Promise<Movie[]> {
   }
 
   const data = await res.json();
-  return data.results as Movie[];
+
+  return {
+    results: data.results as Movie[],
+    total_results: data.total_results as number,
+  };
 }

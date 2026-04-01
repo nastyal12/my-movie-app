@@ -1,4 +1,4 @@
-"use client"; // Обязательно! Файлы ошибок должны быть клиентскими.
+"use client";
 
 import { Alert, Button } from "antd";
 import { useEffect } from "react";
@@ -17,11 +17,11 @@ export default function Error({
   return (
     <div style={{ padding: "40px", maxWidth: "600px", margin: "0 auto" }}>
       <Alert
-        message="Oops! Something went wrong"
+        title="Oops! Something went wrong"
         description={
           error.message.includes("fetch")
-            ? "ou're offline. Please check your internet connection."
-            : "We couldn't load the movies. Please try again later."
+            ? "Network error. Please check your internet connection."
+            : error.message
         }
         type="error"
         showIcon
