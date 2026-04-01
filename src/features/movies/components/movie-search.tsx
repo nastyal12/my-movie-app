@@ -2,7 +2,7 @@
 
 import { Input } from "antd";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import debounce from "lodash/debounce";
 
 export const MovieSearch = () => {
@@ -10,48 +10,40 @@ export const MovieSearch = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [value, setValue] = useState(searchParams.get("query") || "");
-  const isInitialMount = useRef(true);
+  const [inputValue, setInputValue] = useState(searchParams.get("query") || "");
+
+  const debouncedPush = useMemo(
+    () =>
+      debounce((term: string) => {
+        const params = new URLSearchParams(window.location.search);
+        if (term) {
+          params.set("query", term);
+        } else {
+          params.delete("query");
+        }
+        params.set("page", "1"); // При новом поиске всегда на 1 страницу
+        router.push(`${pathname}?${params.toString()}`);
+      }, 500),
+    [pathname, router],
+  );
 
   useEffect(() => {
-    const handler = debounce((term: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-
-      if (isInitialMount.current) {
-        isInitialMount.current = false;
-        return;
-      }
-
-      if (term) {
-        params.set("query", term);
-      } else {
-        params.delete("query");
-      }
-
-      params.set("page", "1");
-
-      router.push(`${pathname}?${params.toString()}`);
-    }, 500);
-
-    handler(value);
-
-    return () => {
-      handler.cancel();
-    };
-  }, [value, pathname, router, searchParams]);
+    return () => debouncedPush.cancel();
+  }, [debouncedPush]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-    isInitialMount.current = false;
+    const val = e.target.value;
+    setInputValue(val);
+    debouncedPush(val);
   };
 
   return (
     <Input
       placeholder="Type to search movies..."
-      value={value}
+      value={inputValue}
       onChange={onChange}
-      style={{ marginBottom: "20px", maxWidth: "1000px", height: "40px" }}
       allowClear
+      style={{ marginBottom: "20px", maxWidth: "1000px", height: "40px" }}
     />
   );
 };

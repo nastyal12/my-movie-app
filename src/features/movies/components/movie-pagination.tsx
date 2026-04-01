@@ -12,16 +12,12 @@ export const MoviePagination = ({ total }: { total: number }) => {
 
   const handleChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
-
     params.set("page", page.toString());
 
-    const currentQuery = searchParams.get("query");
-    if (currentQuery) {
-      params.set("query", currentQuery);
-    }
+    const query = searchParams.get("query");
+    if (query) params.set("query", query);
 
-    const queryString = params.toString();
-    router.push(`${pathname}?${queryString}`);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   return (
