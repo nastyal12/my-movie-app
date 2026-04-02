@@ -1,3 +1,5 @@
+Live Demo on Vercel
+https://my-movie-app-sage.vercel.app/?page=5&tab=search
 Приложение для поиска фильмов, построенное на Next.js 15 (App Router) и Ant Design. 
 Установка и запуск
 Клонируйте репозиторий:
