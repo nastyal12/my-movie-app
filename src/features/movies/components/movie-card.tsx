@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { truncateText } from "@/lib/utils";
 import { Movie } from "../types/movie";
 import { useGenres } from "@/context/genres-context";
+import Image from "next/image";
 
 interface MovieCardProps {
   movie: Movie;
@@ -27,7 +28,7 @@ export const MovieCard = ({ movie }: MovieCardProps) => {
       styles={{ body: { padding: 0, display: "flex", height: "280px" } }}
       style={{ overflow: "hidden", position: "relative" }}
     >
-      <img
+      <Image
         src={
           movie.poster_path
             ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
