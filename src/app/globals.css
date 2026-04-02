@@ -27,7 +27,7 @@ body {
 .rating-circle {
   width: 34px;
   height: 34px;
-  border: 2px solid #E97D01;
+  border: 2px solid; 
   border-radius: 50%;
   display: flex;
   align-items: center;

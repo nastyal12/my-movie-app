@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "./globals.css";
+import { GenresProvider } from "@/context/genres-context";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Movie Search App",
+  description: "Search and rate your favorite movies",
 };
 
 export default function RootLayout({
@@ -18,9 +20,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AntdRegistry>
-          <main style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            {children}
-          </main>
+          <GenresProvider>
+            <main
+              style={{
+                maxWidth: "1200px",
+                margin: "0 auto",
+                padding: "0 20px",
+              }}
+            >
+              {children}
+            </main>
+          </GenresProvider>
         </AntdRegistry>
       </body>
     </html>
