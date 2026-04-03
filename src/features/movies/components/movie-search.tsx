@@ -1,43 +1,50 @@
 "use client";
 
 import { Input } from "antd";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useState, useMemo, useEffect } from "react";
+import debounce from "lodash/debounce";
 
 export const MovieSearch = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const currentQuery = searchParams.get("query") || "";
-  const [inputValue, setInputValue] = useState(currentQuery);
+  const [inputValue, setInputValue] = useState(searchParams.get("query") || "");
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (inputValue !== currentQuery) {
+  const debouncedPush = useMemo(
+    () =>
+      debounce((term: string) => {
         const params = new URLSearchParams(searchParams.toString());
-
-        if (inputValue) {
-          params.set("query", inputValue);
+        if (term) {
+          params.set("query", term);
         } else {
           params.delete("query");
         }
-        params.set("page", "1"); // Сбрасываем на 1 страницу при новом поиске
+        params.set("page", "1");
+        router.push(`${pathname}?${params.toString()}`);
+      }, 600),
+    [pathname, router, searchParams],
+  );
 
-        router.push(`?${params.toString()}`);
-      }
-    }, 600);
+  useEffect(() => {
+    return () => debouncedPush.cancel();
+  }, [debouncedPush]);
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [inputValue, router, searchParams, currentQuery]);
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setInputValue(val);
+    debouncedPush(val);
+  };
 
   return (
-    <div style={{ marginBottom: "20px", width: "100%", maxWidth: "1000px" }}>
-      <Input
-        placeholder="Type to search..."
-        size="large"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-      />
-    </div>
+    <Input
+      placeholder="Type to search movies..."
+      value={inputValue}
+      onChange={onChange}
+      allowClear
+      size="large"
+      style={{ marginBottom: "20px", maxWidth: "1000px" }}
+    />
   );
 };

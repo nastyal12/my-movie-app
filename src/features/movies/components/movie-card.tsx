@@ -32,10 +32,12 @@ export const MovieCard = ({ movie }: MovieCardProps) => {
         src={
           movie.poster_path
             ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
-            : "https://placehold.jp/200x300.png?text=No+Poster"
+            : "https://placehold.jp/200x300.png"
         }
         alt={movie.title}
-        style={{ width: "180px", height: "100%", objectFit: "cover" }}
+        width={180}
+        height={280}
+        style={{ objectFit: "cover" }}
       />
 
       <div
