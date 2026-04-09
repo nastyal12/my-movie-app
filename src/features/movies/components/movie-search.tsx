@@ -22,14 +22,10 @@ export const MovieSearch = () => {
           params.delete("query");
         }
         params.set("page", "1");
-        router.push(`${pathname}?${params.toString()}`);
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
       }, 600),
     [pathname, router, searchParams],
   );
-
-  useEffect(() => {
-    return () => debouncedPush.cancel();
-  }, [debouncedPush]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;

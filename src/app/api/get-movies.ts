@@ -1,4 +1,4 @@
-import { Movie } from "../types/movie";
+import { Movie } from "../../features/movies/types/movie";
 
 interface MovieResponse {
   results: Movie[];

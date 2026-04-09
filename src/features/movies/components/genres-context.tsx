@@ -11,16 +11,18 @@ export const GenresProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const loadGenres = async () => {
       try {
-        const res = await fetch("/api/genres"); // Стучимся к нашему серверу
+        const res = await fetch("/api/genres"); // Путь к твоему новому роуту
         const data = await res.json();
 
-        const map: Record<number, string> = {};
-        data.genres.forEach((g: { id: number; name: string }) => {
-          map[g.id] = g.name;
-        });
-        setGenres(map);
+        if (data.genres) {
+          const map: Record<number, string> = {};
+          data.genres.forEach((g: { id: number; name: string }) => {
+            map[g.id] = g.name;
+          });
+          setGenres(map);
+        }
       } catch (e) {
-        console.error("Genres load error", e);
+        console.error("Ошибка загрузки жанров:", e);
       }
     };
     loadGenres();
