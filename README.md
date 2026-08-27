@@ -69,3 +69,19 @@ src/
 │       └── types/
 │
 └── lib/
+
+
+Getting Started:
+1. Clone the repository
+git clone https://github.com/nastyal12/my-movie-app.git
+cd my-movie-app
+2. Install dependencies
+npm install
+3. Configure environment variables
+Create a .env.local file in the root directory:
+NEXT_PUBLIC_TMDB_API_KEY=your_api_key
+NEXT_PUBLIC_TMDB_BASE_URL=https://api.themoviedb.org/3
+4. Start the development server
+npm run dev
+Open the application in your browser at:
+http://localhost:3000
