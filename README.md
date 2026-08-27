@@ -71,7 +71,7 @@ src/
 └── lib/
 
 
-Getting Started:
+### Getting Started:
 1. Clone the repository
 git clone https://github.com/nastyal12/my-movie-app.git
 cd my-movie-app
